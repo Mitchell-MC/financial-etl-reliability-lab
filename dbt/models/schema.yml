@@ -1,0 +1,35 @@
+version: 2
+
+models:
+  - name: stg_silver_transactions
+    description: Standardized silver transactions used for marts.
+    columns:
+      - name: natural_key
+        description: Deterministic unique transaction key.
+        tests:
+          - not_null
+          - unique
+      - name: account_id
+        tests:
+          - not_null
+      - name: currency
+        tests:
+          - not_null
+          - accepted_values:
+              values: ['USD']
+      - name: amount
+        tests:
+          - not_null
+
+  - name: fct_daily_account_summary
+    description: Daily financial totals by account.
+    columns:
+      - name: run_date
+        tests:
+          - not_null
+      - name: account_id
+        tests:
+          - not_null
+      - name: total_amount
+        tests:
+          - not_null

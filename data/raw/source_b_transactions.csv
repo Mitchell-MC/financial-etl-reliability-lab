@@ -1,0 +1,8 @@
+transaction_id,account_id,posted_at,amount,currency,description,updated_at,status
+B2001,ACC-002,2026-05-20T07:00:00,505.15,USD,Partner payout,2026-05-20T07:05:00,posted
+B2001,ACC-002,2026-05-20T07:00:00,505.15,USD,Partner payout,2026-05-20T07:05:00,posted
+B2002,ACC-005,2026-05-21T09:30:00,1275.00,USD,Legacy import line,2026-05-21T09:33:00,posted
+B2003,,2026-05-21T11:45:00,330.00,USD,Missing account id,2026-05-21T11:46:00,posted
+B2004,ACC-006,2026-05-19T16:10:00,100.00,USD,Late arriving record,2026-05-23T05:00:00,posted
+B2005,ACC-007,2026-05-24T03:20:00,abc,USD,Bad amount format,2026-05-24T03:21:00,posted
+B2006,ACC-008,2026-06-01T10:00:00,750.00,USD,Future posted timestamp,2026-05-24T08:00:00,posted

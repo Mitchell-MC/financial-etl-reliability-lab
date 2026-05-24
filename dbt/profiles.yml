@@ -1,0 +1,7 @@
+financial_etl_reliability_lab:
+  target: dev
+  outputs:
+    dev:
+      type: duckdb
+      path: ../data/artifacts/warehouse.duckdb
+      threads: 4

@@ -1,0 +1,5 @@
+data/artifacts/*.duckdb
+data/artifacts/*.jsonl
+data/artifacts/*.csv
+__pycache__/
+.pytest_cache/

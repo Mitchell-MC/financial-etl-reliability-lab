@@ -1,0 +1,2 @@
+run_id,latest_status,duration_seconds,records_ingested,records_silver,records_quarantine,freshness_lag_minutes,runs_last_7d,successful_runs_last_7d,success_rate_last_7d,avg_quarantine_last_7d,avg_freshness_lag_last_7d,avg_duration_seconds_last_7d,top_quarantine_reasons,error_message
+run-20260524232846-4c514074,success,0,8,8,3,2177,1,1.0,100.0,3.0,2177.0,0.0,"missing_account_id:1, parsing_error:1, future_posted_at:1",
