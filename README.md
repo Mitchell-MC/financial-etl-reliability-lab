@@ -111,8 +111,9 @@ The dbt project reads from `data/artifacts/warehouse.duckdb`.
 - Generate `pipeline_health_report.md` to show reliability and quality trends.
 
 4. Discuss production scaling:
-- Replace local files with S3/API ingestion.
-- Move warehouse target to Snowflake and keep same layering patterns.
+- S3 ingest path already wired — run `python -m src.run_pipeline --source s3 --s3-bucket <bucket>`.
+- Snowflake Gold loader ships as `src/snowflake_loader.py` — runs after pipeline to promote Gold tables.
+- dbt Snowflake profile in `dbt/profiles.yml` — switch targets with `--target prod`.
 - Add alerting integrations and SLA dashboards.
 
 ## Important files
@@ -122,4 +123,51 @@ The dbt project reads from `data/artifacts/warehouse.duckdb`.
 - `src/transform.py` silver and gold transformations.
 - `src/quality.py` quality gate checks.
 - `src/ai_ready.py` AI-oriented output generation.
+- `src/s3_source.py` AWS S3 source download layer.
+- `src/snowflake_loader.py` Snowflake Gold promotion layer.
 - `tests/test_pipeline.py` idempotency-focused test.
+
+## AWS S3 integration
+
+Download source files from S3 before ingestion:
+
+```powershell
+pip install -r requirements-aws.txt
+
+# Dry-run (no credentials needed — lists what would be fetched)
+python -m src.s3_source --bucket my-finance-bucket --prefix feeds/daily/ --dry-run
+
+# Live run
+python -m src.run_pipeline --source s3 --s3-bucket my-finance-bucket --s3-prefix feeds/daily/
+```
+
+Credentials are never hardcoded. Boto3 resolves them via the standard chain:
+environment variables → `~/.aws/credentials` → EC2/ECS instance metadata (IAM role).
+
+## Snowflake integration
+
+Load Gold tables from DuckDB to Snowflake after each pipeline run:
+
+```powershell
+pip install -r requirements-snowflake.txt
+
+# Set credentials
+$env:SNOWFLAKE_ACCOUNT="xy12345.us-east-1"
+$env:SNOWFLAKE_USER="etl_service"
+$env:SNOWFLAKE_PASSWORD="..."
+$env:SNOWFLAKE_WAREHOUSE="TRANSFORMING_WH"
+$env:SNOWFLAKE_DATABASE="FINANCE_PROD"
+$env:SNOWFLAKE_SCHEMA="GOLD"
+
+# Promote Gold tables to Snowflake
+python -m src.snowflake_loader
+```
+
+To run dbt models against Snowflake instead of DuckDB:
+
+```powershell
+Push-Location dbt
+dbt run --profiles-dir . --target prod
+dbt test --profiles-dir . --target prod
+Pop-Location
+```

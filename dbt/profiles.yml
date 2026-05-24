@@ -1,7 +1,23 @@
 financial_etl_reliability_lab:
   target: dev
   outputs:
+    # ── Local development target (DuckDB) ───────────────────────────────────
     dev:
       type: duckdb
       path: ../data/artifacts/warehouse.duckdb
       threads: 4
+
+    # ── Production target (Snowflake) ───────────────────────────────────────
+    # Switch with: dbt run --profiles-dir . --target prod
+    # Credentials are resolved from environment variables — never hardcoded.
+    prod:
+      type: snowflake
+      account: "{{ env_var('SNOWFLAKE_ACCOUNT') }}"
+      user: "{{ env_var('SNOWFLAKE_USER') }}"
+      password: "{{ env_var('SNOWFLAKE_PASSWORD') }}"
+      role: "{{ env_var('SNOWFLAKE_ROLE', 'TRANSFORMER') }}"
+      warehouse: "{{ env_var('SNOWFLAKE_WAREHOUSE', 'TRANSFORMING_WH') }}"
+      database: "{{ env_var('SNOWFLAKE_DATABASE', 'FINANCE_PROD') }}"
+      schema: "{{ env_var('SNOWFLAKE_SCHEMA', 'GOLD') }}"
+      threads: 8
+      client_session_keep_alive: false

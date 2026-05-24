@@ -1,0 +1,4 @@
+# Snowflake connector + dbt adapter
+snowflake-connector-python==3.14.0
+dbt-snowflake==1.8.2
+cryptography>=42.0.0   # required for key-pair auth

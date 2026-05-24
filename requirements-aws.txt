@@ -1,0 +1,2 @@
+# AWS S3 source integration
+boto3==1.38.0

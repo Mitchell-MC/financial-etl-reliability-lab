@@ -1,4 +1,5 @@
 import argparse
+import os
 import uuid
 from datetime import UTC, datetime
 
@@ -14,7 +15,24 @@ from src.metrics import append_metrics
 def main():
     parser = argparse.ArgumentParser(description="Run financial ETL reliability pipeline")
     parser.add_argument("--run-date", required=False, help="Logical run date in YYYY-MM-DD")
+    parser.add_argument(
+        "--source",
+        choices=["local", "s3"],
+        default="local",
+        help="Data source: 'local' (default) reads from data/raw/; 's3' pulls from S3 first.",
+    )
+    parser.add_argument("--s3-bucket", default=os.environ.get("S3_BUCKET", ""), help="S3 bucket name (required when --source s3)")
+    parser.add_argument("--s3-prefix", default=os.environ.get("S3_PREFIX", ""), help="S3 key prefix / folder")
     args = parser.parse_args()
+
+    # --- Optional S3 fetch before ingestion ---
+    if args.source == "s3":
+        if not args.s3_bucket:
+            raise ValueError("--s3-bucket (or S3_BUCKET env var) is required when --source s3")
+        from src.s3_source import download_sources
+        print(f"Fetching source files from S3 bucket '{args.s3_bucket}' prefix '{args.s3_prefix}'...")
+        download_sources(args.s3_bucket, args.s3_prefix)
+        print("S3 fetch complete. Proceeding with local ingest.\n")
 
     run_id = f"run-{datetime.now(UTC).strftime('%Y%m%d%H%M%S')}-{uuid.uuid4().hex[:8]}"
     start_ts = datetime.now(UTC)
