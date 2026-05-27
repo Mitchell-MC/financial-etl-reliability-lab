@@ -1,6 +1,5 @@
 # Financial ETL Reliability Lab
 
-A portfolio-grade project designed for Senior Data Engineer interviews.
 
 ## What this project demonstrates
 
